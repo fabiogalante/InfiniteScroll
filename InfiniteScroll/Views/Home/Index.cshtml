@@ -1,0 +1,82 @@
+﻿@{
+    ViewBag.Title = "Aprenda DotNet";
+}
+
+<div class="jumbotron">
+    <h1>Aprenda DotNet - Infinite Scroll ou Endless Scroll com ASP.NET or MVC</h1>
+</div>
+
+<div class="row">
+
+    <input type="hidden" id="ultimoRegistroId" value="1" />
+    <div class='container'>
+        <div class='col-lg-12'>
+            <div class='well'>
+                <ul>
+                    <div id="produtos"></div>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    @section scripts
+{
+
+
+        <script>
+            //Obter os primeiros produtos
+            $(document).ready(function () {
+                ObterProdutos();
+            });
+
+            //Próximos produtos
+            $(window).scroll(function () {
+                if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+                    ObterProdutos();
+                }
+            });
+
+           
+            function ObterProdutos() {
+
+                var ultimoRegistro = ($("#ultimoRegistroId").val());
+
+                var produtos = "";
+
+                $.ajax({
+                    type: 'GET',
+                    url: "@Url.Action("ObterProdutos", "Home")",
+                    data: { ultimoRegistro: ultimoRegistro },
+                    dataType: 'json',
+                    success: function (jsonData) {
+
+                        var linhaId = ultimoRegistro + 1;
+                        $("#ultimoRegistroId").val(linhaId);
+
+                        if (jsonData == null) {
+                            return;
+                        }
+
+                        $(jsonData.Result).each(function () {
+
+                            produtos += "<hr></br>   <strong class='pull-left primary-font'>Produto:" + this.Produto + "</strong></br>" +
+                          "</br><li class='ui-state-default'>Marca: " + this.Marca + " </li></br>" +
+                          "</br><li class='ui-state-default'> Categoria:" + this.Categoria + " </li></br>" +
+                          "</br><div class='imagebox'><img src=http://imagens.centauro.com.br/180x180/" + this.Caminho + " alt='article image'/></div>";
+                            
+                            $('#produtos').append(produtos);
+
+                        });
+                    },
+                    error: function () {
+                        alert('Error');
+                    }
+                });
+
+                return false;
+            }
+        </script>
+    }
+
+</div>
