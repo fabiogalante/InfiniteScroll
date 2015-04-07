@@ -10,10 +10,15 @@
 
     <input type="hidden" id="ultimoRegistroId" value="1" />
     <div class='container'>
-        <div class='col-lg-12'>
+        <div class='col-md-12'>
             <div class='well'>
                 <ul>
                     <div id="produtos"></div>
+
+                    <div class="col-md-6" id="ajaxSpinnerContainer">
+                        <img id="ajaxSpinnerImage" title="Carregando..." src="~/Content/loading.gif" />
+                    </div>
+
                 </ul>
             </div>
         </div>
@@ -49,27 +54,29 @@
                     url: "@Url.Action("ObterProdutos", "Home")",
                     data: { ultimoRegistro: ultimoRegistro },
                     dataType: 'json',
-                    success: function (jsonData) {
+                    beforeSend: function() { $("#ajaxSpinnerImage").show(); },
+                    complete: function() { $("#ajaxSpinnerImage").hide(); },
+                    success: function(jsonData) {
 
-                        var linhaId = ultimoRegistro + 1;
+                        var linhaId = parseInt(ultimoRegistro) + 1;
                         $("#ultimoRegistroId").val(linhaId);
 
                         if (jsonData == null) {
                             return;
                         }
 
-                        $(jsonData.Result).each(function () {
+                        $(jsonData.Result).each(function() {
 
                             produtos += "<hr></br>   <strong class='pull-left primary-font'>Produto:" + this.Produto + "</strong></br>" +
-                          "</br><li class='ui-state-default'>Marca: " + this.Marca + " </li></br>" +
-                          "</br><li class='ui-state-default'> Categoria:" + this.Categoria + " </li></br>" +
-                          "</br><div class='imagebox'><img src=http://imagens.centauro.com.br/180x180/" + this.Caminho + " alt='article image'/></div>";
-                            
+                                "</br><li class='ui-state-default'>Marca: " + this.Marca + " </li></br>" +
+                                "</br><li class='ui-state-default'> Categoria:" + this.Categoria + " </li></br>" +
+                                "</br><div class='imagebox'><img src=http://imagens.centauro.com.br/180x180/" + this.Caminho + " alt='article image'/></div>";
+
                             $('#produtos').append(produtos);
 
                         });
                     },
-                    error: function () {
+                    error: function() {
                         alert('Error');
                     }
                 });

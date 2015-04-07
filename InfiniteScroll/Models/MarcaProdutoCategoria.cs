@@ -28,7 +28,6 @@ namespace InfiniteScroll.Models
         {
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
             modelBuilder.Entity<MarcaProdutoCategoria>().ToTable("MarcaProdutoCategoria");
-            //modelBuilder.Entity<Administrador>().ToTable("Administradores");
         }
 
     }
